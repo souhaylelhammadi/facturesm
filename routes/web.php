@@ -17,6 +17,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('invoices', InvoiceController::class);
+    Route::get('/dashboard', [\App\Http\Controllers\InvoiceController::class, 'dashboard'])->name('dashboard');
+    Route::get('invoices-export-pdf', [\App\Http\Controllers\InvoiceController::class, 'exportPdf'])->name('invoices.export.pdf');
+    Route::get('invoices/{invoice}/export-pdf', [\App\Http\Controllers\InvoiceController::class, 'exportPdfSingle'])->name('invoices.export.pdf.single');
 });
 
 require __DIR__ . '/auth.php';

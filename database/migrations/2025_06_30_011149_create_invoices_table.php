@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('status')->default('en attente');
             $table->text('description')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

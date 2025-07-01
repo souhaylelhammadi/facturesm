@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Invoice;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class InvoiceController extends Controller
 {
@@ -13,7 +14,7 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        $invoices = Invoice::orderByDesc('created_at')->get();
+        $invoices = Invoice::withTrashed()->orderByDesc('created_at')->get();
         return view('invoices.index', compact('invoices'));
     }
 
@@ -82,5 +83,29 @@ class InvoiceController extends Controller
     {
         $invoice->delete();
         return redirect()->route('invoices.index')->with('success', 'Facture supprimée.');
+    }
+
+    public function dashboard()
+    {
+        $total = Invoice::count();
+        $totalAmount = Invoice::sum('amount');
+        $paid = Invoice::where('status', 'payée')->count();
+        $pending = Invoice::where('status', 'en attente')->count();
+        $cancelled = Invoice::where('status', 'annulée')->count();
+        $invoices = Invoice::orderByDesc('created_at')->get();
+        return view('dashboard', compact('total', 'totalAmount', 'paid', 'pending', 'cancelled', 'invoices'));
+    }
+
+    public function exportPdf()
+    {
+        $invoices = Invoice::all();
+        $pdf = Pdf::loadView('invoices.pdf', compact('invoices'));
+        return $pdf->download('factures.pdf');
+    }
+
+    public function exportPdfSingle(Invoice $invoice)
+    {
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('invoices.pdf_single', compact('invoice'));
+        return $pdf->download('facture_' . $invoice->number . '.pdf');
     }
 }
