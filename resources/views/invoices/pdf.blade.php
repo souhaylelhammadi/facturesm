@@ -19,6 +19,7 @@
                 <th>Date d'échéance</th>
                 <th>Montant</th>
                 <th>Statut</th>
+                <th>Description</th>
             </tr>
         </thead>
         <tbody>
@@ -29,6 +30,7 @@
                 <td>{{ $invoice->due_date }}</td>
                 <td>{{ number_format($invoice->amount, 2, ',', ' ') }} €</td>
                 <td>{{ ucfirst($invoice->status) }}</td>
+                <td>{{ ($invoice->description) }}</td>
             </tr>
             @endforeach
         </tbody>
